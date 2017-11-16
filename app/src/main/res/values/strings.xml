@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Alarm</string>
+    <string name="app_alarm">Alarm</string>
+    <string name="app_timer">Timer</string>
+    <string name="app_location">Location Alarm</string>
+    <string name="title_alarm">Alarm</string>
+    <string name="title_timer">Timer</string>
+    <string name="title_location">Location</string>
+</resources>
