@@ -1,14 +1,128 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="deanschulz.alarmapp.AlarmFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
+    <EditText
+        android:id="@+id/alarmLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/alarmMessage"
+        android:layout_alignStart="@+id/alarmMessage"
+        android:layout_below="@+id/datePicker"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:hint="Ex. Chicago, IL"
+        android:inputType="textPersonName"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp" />
+
+    <EditText
+        android:id="@+id/alarmMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="11dp"
+        android:ems="10"
+        android:hint="Alarm Message"
+        android:inputType="textPersonName"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp" />
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/datePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_alarm" />
+        android:text="date"
+        android:layout_below="@+id/timePicker"
+        android:layout_alignLeft="@+id/timePicker"
+        android:layout_alignStart="@+id/timePicker"
+        android:layout_marginTop="35dp" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/timePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="17dp"
+        android:text="time"
+        android:layout_below="@+id/alarmMessage"
+        android:layout_alignLeft="@+id/alarmMessage"
+        android:layout_alignStart="@+id/alarmMessage" />
+
+    <TextView
+        android:id="@+id/timeTextField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/timePicker"
+        android:layout_alignEnd="@+id/alarmMessage"
+        android:layout_alignRight="@+id/alarmMessage"
+        android:layout_alignTop="@+id/timePicker"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_toRightOf="@+id/timePicker"
+        android:gravity="center_vertical"
+        android:text="Set Time"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/dateTextField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/datePicker"
+        android:layout_alignEnd="@+id/alarmLocation"
+        android:layout_alignLeft="@+id/timeTextField"
+        android:layout_alignRight="@+id/alarmLocation"
+        android:layout_alignStart="@+id/timeTextField"
+        android:layout_alignTop="@+id/datePicker"
+        android:gravity="center_vertical"
+        android:text="Set Date"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/timeZoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/alarmLocation"
+        android:layout_alignLeft="@+id/alarmLocation"
+        android:layout_alignRight="@+id/alarmLocation"
+        android:layout_alignStart="@+id/alarmLocation"
+        android:layout_below="@+id/alarmLocation"
+        android:layout_marginTop="24dp"
+        android:text="Get Time Zone" />
+
+    <TextView
+        android:id="@+id/timeZoneField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/timeZoneButton"
+        android:layout_alignLeft="@+id/timeZoneButton"
+        android:layout_alignRight="@+id/timeZoneButton"
+        android:layout_alignStart="@+id/timeZoneButton"
+        android:layout_below="@+id/timeZoneButton"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:textSize="16sp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:scaleType="center"
+        app:backgroundTint="?attr/colorButtonNormal"
+        app:elevation="13dp"
+        app:fabSize="normal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="17dp"
+        app:srcCompat="@drawable/ic_add_alarm_black_24dp"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
