@@ -1,17 +1,28 @@
 package deanschulz.alarmapp;
 
+import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 
@@ -29,7 +40,18 @@ public class AlarmFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     Button TimeZoneButton;
+    Button setDate;
+    Button setTime;
     TextView TimeZoneTextview;
+    TextView dateTextField;
+    TextView timeTextField;
+    EditText message;
+    EditText location;
+    String calMonth;
+    String calDayOfMonth;
+    String calYear;
+    String calHour;
+    String calMinute;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -87,6 +109,12 @@ public class AlarmFragment extends Fragment {
         View myFragmentView = inflater.inflate(R.layout.fragment_alarm, container, false);
         TimeZoneButton = (Button) myFragmentView.findViewById(R.id.timeZoneButton);
         TimeZoneTextview = (TextView) myFragmentView.findViewById(R.id.timeZoneField);
+        dateTextField = (TextView) myFragmentView.findViewById(R.id.dateTextField);
+        timeTextField = (TextView) myFragmentView.findViewById(R.id.timeTextField);
+        setDate = (Button) myFragmentView.findViewById(R.id.datePicker);
+        setTime = (Button) myFragmentView.findViewById(R.id.timePicker);
+        message = (EditText) myFragmentView.findViewById(R.id.alarmMessage);
+        location = (EditText) myFragmentView.findViewById(R.id.alarmLocation);
         TimeZoneButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -95,8 +123,86 @@ public class AlarmFragment extends Fragment {
             }
         });
 
+        //Add to others when finished....
+
+        final TextView timeTextField = (TextView) myFragmentView.findViewById(R.id.timeTextField);
+        final TextView dateTextField = (TextView) myFragmentView.findViewById(R.id.dateTextField);
+        final EditText alarmLocation = (EditText) myFragmentView.findViewById(R.id.alarmLocation);
+        final TextView timeZoneField = (TextView) myFragmentView.findViewById(R.id.timeZoneField);
+        FloatingActionButton myFab = (FloatingActionButton) myFragmentView.findViewById(R.id.floatingActionButton);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(timeTextField.getText().length() == 0 || dateTextField.getText().length() == 0 ||
+                        alarmLocation.getText().length() == 0 || timeZoneField.getText().length() == 0) {
+                    Toast toast = Toast.makeText(getContext(), "Fill blank fields", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+                else{
+                    startAlarm();
+                }
+            }
+        });
+        setDate.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                date(v);
+            }
+        });
+        setTime.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                time(v);
+            }
+        });
         return myFragmentView;
     }
+    public void startAlarm(){
+
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+        cal.set(Calendar.DATE,Integer.parseInt(calDayOfMonth));
+        cal.set(Calendar.MONTH,Integer.parseInt(calMonth));
+        cal.set(Calendar.YEAR,Integer.parseInt(calYear));
+        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(calHour));
+        cal.set(Calendar.MINUTE, Integer.parseInt(calMinute));
+        cal.set(Calendar.SECOND, 0);
+        Intent intent = new Intent(getContext(), AlarmAct.class);
+        intent.putExtra("message", message.getText().toString());
+        intent.putExtra("location", location.getText().toString());
+        intent.putExtra("selection", 1);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0,intent, 0);
+        AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        Toast toast = Toast.makeText(getContext(), "Alarm set", Toast.LENGTH_SHORT);
+        toast.show();
+    }
+    public void date(View v){
+        Calendar call = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+            new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    dateTextField.setText("" + month + "/" + dayOfMonth + "/" + year);
+                    calMonth = String.valueOf(month);
+                    calDayOfMonth = String.valueOf(dayOfMonth);
+                    calYear = String.valueOf(year);
+                }
+            }, call.get(Calendar.YEAR), call.get(Calendar.MONTH), call.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.show();
+
+    }
+    public void time(View v){
+        Calendar cal2 = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+            new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    timeTextField.setText("" + hourOfDay + ":" + minute);
+                    calHour = String.valueOf(hourOfDay);
+                    calMinute = String.valueOf(minute);
+                }
+        }, cal2.get(Calendar.HOUR_OF_DAY), cal2.get(Calendar.MINUTE), false);
+        timePickerDialog.show();
+    }
+
+    //.......
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
