@@ -1,5 +1,6 @@
 package deanschulz.alarmapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -12,9 +13,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,19 +40,30 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private BottomBar mBottomBar;
     private FragNavController fragNavController;
+    Toolbar toolbar = null;
+    public Bundle savedInstanceState = null;
 
     //indices to fragments
     private final int TAB_FIRST = FragNavController.TAB1;
     private final int TAB_SECOND = FragNavController.TAB2;
     private final int TAB_THIRD = FragNavController.TAB3;
+    public DrawerBuilder drawerBuilder;
+    AlarmManager alarmManager = AlarmManager.getInstance();
+    public void setArray(String newItem){
+        alarmManager.setAlarm(newItem);
+    }
+    public void setDrawer(){
+        //adds to alarmlist sidebar
+        alarmManager.getDrawer().addDrawerItems(new SectionDrawerItem().withName(alarmManager.getAlarmList().get(alarmManager.getSize()-1)).withDivider(true));
+        Log.i("name", alarmManager.getAlarmList().get(alarmManager.getSize()-1));
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //FragNav
         //list of fragments
         List<Fragment> fragments = new ArrayList<>(3);
 
@@ -102,53 +116,21 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(false);
-
-        new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .withActionBarDrawerToggleAnimated(true)
-                .withTranslucentStatusBar(false)
-                .withFullscreen(true)
-                .withSavedInstance(savedInstanceState)
-                .addDrawerItems(
-                        home,
-                        new SectionDrawerItem().withName("fill this with alarms"),
-                        new DividerDrawerItem(),
-                        new SectionDrawerItem().withName("fill this with alarms"),
-                        new DividerDrawerItem()
-
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem != null) {
-                            Intent intent = null;
-                            if (drawerItem.getIdentifier() == 1) {
-                                intent = new Intent(MainActivity.this, MainActivity.class);
-                            } else if (drawerItem.getIdentifier() == 2) {
-                                //intent = new Intent(MainActivity.this, Class.class);
-                            } else if (drawerItem.getIdentifier() == 3) {
-                                //intent = new Intent(MainActivity.this, Class.class);
-                            } else if (drawerItem.getIdentifier() == 11) {
-                                //intent = new Intent(MainActivity.this, Class.class);
-                            } else if (drawerItem.getIdentifier() == 12) {
-                                //intent = new Intent(MainActivity.this, Class.class);
-                            } else if (drawerItem.getIdentifier() == 13) {
-                                //intent = new Intent(MainActivity.this, Class.class);
-                            }
-                            if (intent != null) {
-                                MainActivity.this.startActivity(intent);
-                            }
-                        }
-
-                        return false;
-                    }
-                })
-                .build();
+        this.savedInstanceState = savedInstanceState;
+        drawerBuilder = new DrawerBuilder();
+            drawerBuilder.withActivity(this);
+            drawerBuilder.withToolbar(toolbar);
+            drawerBuilder.withActionBarDrawerToggleAnimated(true);
+            drawerBuilder.withTranslucentStatusBar(false);
+            drawerBuilder.withFullscreen(true);
+            drawerBuilder.withSavedInstance(savedInstanceState);
+            drawerBuilder.addDrawerItems(home);
+            drawerBuilder.build();
+        alarmManager.setDrawer(drawerBuilder);
         //End of Navigation drawer
 
     }

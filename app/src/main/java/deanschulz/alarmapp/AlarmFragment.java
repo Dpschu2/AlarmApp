@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -106,7 +117,8 @@ public class AlarmFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View myFragmentView = inflater.inflate(R.layout.fragment_alarm, container, false);
+        final View myFragmentView = inflater.inflate(R.layout.fragment_alarm, container, false);
+
         TimeZoneButton = (Button) myFragmentView.findViewById(R.id.timeZoneButton);
         TimeZoneTextview = (TextView) myFragmentView.findViewById(R.id.timeZoneField);
         dateTextField = (TextView) myFragmentView.findViewById(R.id.dateTextField);
@@ -139,6 +151,15 @@ public class AlarmFragment extends Fragment {
                 }
                 else{
                     startAlarm();
+                    MainActivity main = new MainActivity();
+                    String newItem = message.getText().toString() + "\n" + calMonth + "/" + calDayOfMonth + "/" + calYear + " at " + calHour + ":" + calMinute;
+                    main.setArray(newItem);
+                    main.setDrawer();
+                    clearForm((ViewGroup) myFragmentView.findViewById(R.id.rootAlarm));
+                    timeZoneField.setText("");
+                    alarmLocation.setText("");
+                    dateTextField.setText("");
+                    timeTextField.setText("");
                 }
             }
         });
@@ -154,22 +175,42 @@ public class AlarmFragment extends Fragment {
         });
         return myFragmentView;
     }
+    private void clearForm(ViewGroup group)
+    {
+        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+            View view = group.getChildAt(i);
+            if (view instanceof EditText) {
+                ((EditText)view).setText("");
+            }
+
+            if(view instanceof ViewGroup && (((ViewGroup)view).getChildCount() > 0))
+                clearForm((ViewGroup)view);
+        }
+    }
     public void startAlarm(){
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
+        Log.i("calDayOfMonth", calDayOfMonth);
+        Log.i("calMonth", calMonth);
+        Log.i("calYear", calYear);
+        Log.i("calHour", calHour);
+        Log.i("calMinute", calMinute);
         cal.set(Calendar.DATE,Integer.parseInt(calDayOfMonth));
         cal.set(Calendar.MONTH,Integer.parseInt(calMonth));
         cal.set(Calendar.YEAR,Integer.parseInt(calYear));
         cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(calHour));
         cal.set(Calendar.MINUTE, Integer.parseInt(calMinute));
         cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long time = cal.getTimeInMillis();
         Intent intent = new Intent(getContext(), AlarmAct.class);
+        intent.addCategory("android.intent.category.DEFAULT");
         intent.putExtra("message", message.getText().toString());
         intent.putExtra("location", location.getText().toString());
         intent.putExtra("selection", 1);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0,intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0,intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        am.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
         Toast toast = Toast.makeText(getContext(), "Alarm set", Toast.LENGTH_SHORT);
         toast.show();
     }
