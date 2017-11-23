@@ -49,9 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private final int TAB_THIRD = FragNavController.TAB3;
     public DrawerBuilder drawerBuilder;
     AlarmManager alarmManager = AlarmManager.getInstance();
+
     public void setArray(String newItem){
         alarmManager.setAlarm(newItem);
     }
+
     public void setDrawer(){
         //adds to alarmlist sidebar
         alarmManager.getDrawer().addDrawerItems(new SectionDrawerItem().withName(alarmManager.getAlarmList().get(alarmManager.getSize()-1)).withDivider(true));

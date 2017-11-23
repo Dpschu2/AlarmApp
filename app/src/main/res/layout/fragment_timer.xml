@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/timerAlarm"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="deanschulz.alarmapp.AlarmFragment">
 
@@ -78,12 +79,13 @@
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/timerMessage"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/daysText"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:inputType="numberSigned"
         android:maxLength="2" />
 
@@ -96,7 +98,17 @@
         android:layout_alignLeft="@+id/days"
         android:layout_alignStart="@+id/days"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:inputType="numberSigned"
         android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/countdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/timerLocation"
+        android:layout_marginTop="19dp"
+        android:gravity="center_horizontal"
+        android:textSize="24sp" />
 
 </RelativeLayout>

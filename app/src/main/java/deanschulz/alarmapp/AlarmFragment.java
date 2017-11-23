@@ -152,7 +152,7 @@ public class AlarmFragment extends Fragment {
                 else{
                     startAlarm();
                     MainActivity main = new MainActivity();
-                    String newItem = message.getText().toString() + "\n" + calMonth + "/" + calDayOfMonth + "/" + calYear + " at " + calHour + ":" + calMinute;
+                    String newItem = "Alarm: " + message.getText().toString() + ", " + calMonth + "/" + calDayOfMonth + "/" + calYear + " at " + calHour + ":" + calMinute;
                     main.setArray(newItem);
                     main.setDrawer();
                     clearForm((ViewGroup) myFragmentView.findViewById(R.id.rootAlarm));
