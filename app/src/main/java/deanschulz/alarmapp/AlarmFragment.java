@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class AlarmFragment extends Fragment {
     String calYear;
     String calHour;
     String calMinute;
+    Switch recursive;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -127,6 +129,7 @@ public class AlarmFragment extends Fragment {
         setTime = (Button) myFragmentView.findViewById(R.id.timePicker);
         message = (EditText) myFragmentView.findViewById(R.id.alarmMessage);
         location = (EditText) myFragmentView.findViewById(R.id.alarmLocation);
+        recursive = (Switch) myFragmentView.findViewById(R.id.recursive);
         TimeZoneButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -160,6 +163,7 @@ public class AlarmFragment extends Fragment {
                     alarmLocation.setText("");
                     dateTextField.setText("");
                     timeTextField.setText("");
+                    recursive.setChecked(false);
                 }
             }
         });
@@ -190,11 +194,6 @@ public class AlarmFragment extends Fragment {
     public void startAlarm(){
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
-        Log.i("calDayOfMonth", calDayOfMonth);
-        Log.i("calMonth", calMonth);
-        Log.i("calYear", calYear);
-        Log.i("calHour", calHour);
-        Log.i("calMinute", calMinute);
         cal.set(Calendar.DATE,Integer.parseInt(calDayOfMonth));
         cal.set(Calendar.MONTH,Integer.parseInt(calMonth));
         cal.set(Calendar.YEAR,Integer.parseInt(calYear));
@@ -210,8 +209,16 @@ public class AlarmFragment extends Fragment {
         intent.putExtra("selection", 1);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0,intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        am.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-        Toast toast = Toast.makeText(getContext(), "Alarm set", Toast.LENGTH_SHORT);
+        if(!recursive.isChecked())
+            am.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        else
+            am.setRepeating(AlarmManager.RTC_WAKEUP, time, am.INTERVAL_DAY * 7, pendingIntent);
+        String toastText;
+        if(recursive.isChecked())
+            toastText = "Recursive alarm set";
+        else
+            toastText = "Alarm set";
+        Toast toast = Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT);
         toast.show();
     }
     public void date(View v){
